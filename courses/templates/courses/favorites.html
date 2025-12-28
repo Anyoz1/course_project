@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Моё Избранное</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; background: #f4f4f4; }
+        .warning-box { background: #fff3cd; color: #856404; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ffeeba; }
+        .course-card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .btn-delete { color: #dc3545; text-decoration: none; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <a href="{% url 'course_list' %}" style="text-decoration: none;">← Назад к курсам</a>
+    <h1>Моё Избранное</h1>
+
+    {% if not user.is_authenticated %}
+        <div class="warning-box">
+            ⚠️ <strong>Внимание!</strong> Вы не вошли в аккаунт. Ваши избранные курсы хранятся временно и могут пропасть, если вы очистите кэш браузера. 
+            <a href="{% url 'signup' %}">Создайте аккаунт</a>, чтобы сохранить их навсегда.
+        </div>
+    {% endif %}
+
+    {% for course in courses %}
+        <div class="course-card">
+            <h3>{{ course.title }}</h3>
+            <a href="{% url 'course_detail' course.id %}" style="text-decoration: none; color: #007bff;">Открыть курс</a> | 
+            <a href="{% url 'toggle_favorite' course.id %}" class="btn-delete">Удалить из избранного</a>
+        </div>
+    {% empty %}
+        <p>Вы еще ничего не добавили в избранное.</p>
+    {% endfor %}
+</body>
+</html>

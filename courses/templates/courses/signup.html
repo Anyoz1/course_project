@@ -1,0 +1,9 @@
+<div style="max-width: 400px; margin: 50px auto; font-family: sans-serif;">
+    <h2>Регистрация нового аккаунта</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Создать аккаунт</button>
+    </form>
+    <p>Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
+</div>

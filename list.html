@@ -1,0 +1,8 @@
+<h1>Все курсы</h1>
+<ul>
+    {% for course in courses %}
+        <li>
+            <strong>{{ course.title }}</strong> - {{ course.description }}
+        </li>
+    {% endfor %}
+</ul>
