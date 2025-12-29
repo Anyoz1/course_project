@@ -2,89 +2,227 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyArch — Платформа курсов</title>
+    <title>Каталог — StudyArch</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <style>
-        :root { --primary: #007bff; --bg: #f8f9fa; --text: #212529; --card-bg: #ffffff; --fav: #ff4757; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; line-height: 1.5; }
-        .container { max-width: 1000px; margin: 0 auto; }
-        
-        .header { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        .logo { font-size: 1.4rem; font-weight: 800; color: var(--primary); text-decoration: none; }
-        .nav-right { display: flex; align-items: center; gap: 20px; }
-        .nav-link { text-decoration: none; color: var(--text); font-weight: 500; font-size: 0.95rem; display: flex; align-items: center; gap: 5px; }
-        
-        .category-nav { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 30px; scrollbar-width: none; }
-        .cat-item { background: var(--card-bg); padding: 8px 18px; border-radius: 20px; text-decoration: none; color: #555; border: 1px solid #ddd; font-size: 0.85rem; transition: 0.2s; white-space: nowrap; }
-        .cat-item:hover { border-color: var(--primary); color: var(--primary); }
+        /* Глобальный сброс */
+        * { box-sizing: border-box; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
-        .card { background: var(--card-bg); border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; position: relative; transition: transform 0.2s; }
-        .card:hover { transform: translateY(-3px); }
-        .tag { display: inline-block; background: #e7f3ff; color: var(--primary); padding: 3px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px; align-self: flex-start; }
-        
-        /* Кнопка избранного с динамическим цветом */
-        .fav-btn { position: absolute; top: 20px; right: 20px; background: none; border: none; cursor: pointer; padding: 5px; color: #ccc; transition: 0.2s; }
-        .fav-btn:hover { color: var(--fav); }
-        .fav-active { color: var(--fav) !important; }
-        
-        .card h3 { margin: 0 0 10px 0; font-size: 1.25rem; }
-        .card p { color: #666; font-size: 0.9rem; flex-grow: 1; margin-bottom: 20px; }
-        .btn-main { background: var(--primary); color: white; text-align: center; text-decoration: none; padding: 12px; border-radius: 10px; font-weight: 600; font-size: 0.9rem; }
-        
-        .logout-btn { background: none; border: 1px solid #ff4757; color: #ff4757; padding: 5px 12px; border-radius: 6px; cursor: pointer; }
+        :root {
+            --primary: #2563EB; /* Твой стандартный синий */
+            --bg: #F9FAFB;
+            --text: #111827;
+            --card-bg: #ffffff;
+            --border: #E5E7EB;
+            --gray: #6B7280;
+            --chip-bg: #F3F4F6;
+            --radius: 16px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0 0 100px 0; /* Отступ под нижнюю панель */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container { max-width: 800px; margin: auto; padding: 20px; }
+
+        /* --- HEADER & STICKY SEARCH --- */
+        .header-sticky {
+            position: sticky;
+            top: 0;
+            background: rgba(249, 250, 251, 0.9);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 1000;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            padding: 12px 15px 12px 42px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: #ffffff;
+            outline: none;
+            font-size: 1rem;
+            transition: 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .search-input:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); 
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            color: var(--gray);
+            pointer-events: none;
+        }
+
+        /* --- CATEGORIES (Chips) --- */
+        .category-nav {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px 0 25px;
+            scrollbar-width: none;
+        }
+        .category-nav::-webkit-scrollbar { display: none; }
+
+        .cat-item {
+            padding: 10px 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            text-decoration: none;
+            color: var(--gray);
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: 0.2s;
+        }
+
+        .cat-active {
+            background: var(--primary);
+            color: #fff !important;
+            border-color: var(--primary);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+        }
+
+        /* --- GRID & CARDS --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: var(--radius);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+
+        .card h3 { margin: 0 0 10px; font-size: 1.2rem; font-weight: 700; color: var(--text); }
+        .card p { margin: 0 0 20px; color: var(--gray); font-size: 0.95rem; line-height: 1.5; flex-grow: 1; }
+
+        .btn-main {
+            background: var(--primary);
+            color: #fff;
+            text-align: center;
+            padding: 14px;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+        .btn-main:active { opacity: 0.8; transform: scale(0.98); }
+
+        /* --- BOTTOM NAV --- */
+        .mobile-nav {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 75px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid var(--border);
+            z-index: 1000;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: #9CA3AF;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .nav-item svg { margin-bottom: 4px; }
+        .nav-item.active { color: var(--primary); }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <a href="/" class="logo">StudyArch</a>
-            <div class="nav-right">
-                <a href="{% url 'favorites_list' %}" class="nav-link">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                    Избранное
-                </a>
-                {% if user.is_authenticated %}
-                    <span style="font-size: 0.9rem;">{{ user.username }}</span>
-                    <form action="{% url 'logout' %}" method="post" style="display:inline;">
-                        {% csrf_token %}<button type="submit" class="logout-btn">Выход</button>
-                    </form>
-                {% else %}
-                    <a href="{% url 'login' %}" class="nav-link">Войти</a>
-                    <a href="{% url 'signup' %}" class="btn-main" style="padding: 7px 15px;">Начать</a>
-                {% endif %}
-            </div>
-        </header>
 
-        <nav class="category-nav">
-            <a href="{% url 'course_list' %}" class="cat-item">Все курсы</a>
-            {% for cat in categories %}
-                <a href="{% url 'category_filter' cat.id %}" class="cat-item">{{ cat.name }}</a>
-            {% endfor %}
-        </nav>
+<div class="header-sticky">
+    <form action="{% url 'course_list' %}" method="get" class="search-container">
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" name="q" class="search-input" placeholder="Поиск в каталоге..." value="{{ query|default:'' }}">
+    </form>
+</div>
 
-        <h2>{% if current_category %}{{ current_category.name }}{% else %}Все курсы{% endif %}</h2>
+<div class="container">
+    <nav class="category-nav">
+        <a href="{% url 'course_list' %}" class="cat-item {% if not current_category %}cat-active{% endif %}">Все курсы</a>
+        {% for cat in categories %}
+            <a href="{% url 'category_filter' cat.id %}" class="cat-item {% if current_category.id == cat.id %}cat-active{% endif %}">
+                {{ cat.name }}
+            </a>
+        {% endfor %}
+    </nav>
 
-        <div class="grid">
-            {% for course in courses %}
-                <div class="card">
-                    <a href="{% url 'toggle_favorite' course.id %}" 
-                       class="fav-btn {% if course.id in favorite_ids %}fav-active{% endif %}" 
-                       title="В избранное">
-                        <svg width="22" height="22" viewBox="0 0 24 24" 
-                             fill="{% if course.id in favorite_ids %}#ff4757{% else %}none{% endif %}" 
-                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                        </svg>
-                    </a>
+    <h2 style="font-size: 1.4rem; font-weight: 800; margin: 0 0 20px; letter-spacing: -0.02em;">
+        {% if query %}Результаты: "{{ query }}"
+        {% elif current_category %}{{ current_category.name }}
+        {% else %}Полный каталог{% endif %}
+    </h2>
 
-                    <span class="tag">{% if course.category %}{{ course.category.name }}{% else %}Общее{% endif %}</span>
-                    <h3>{{ course.title }}</h3>
-                    <p>{{ course.description|truncatewords:15 }}</p>
-                    <a href="{% url 'course_detail' course.id %}" class="btn-main">Изучить</a>
-                </div>
-            {% endfor %}
+    <div class="grid">
+    {% for course in courses %}
+        <div class="card">
+            <h3>{{ course.title }}</h3>
+            <p>{{ course.description|truncatewords:15 }}</p>
+            <a href="{% url 'course_detail' course.id %}" class="btn-main">Изучить</a>
         </div>
+    {% endfor %}
     </div>
+</div>
+
+<nav class="mobile-nav">
+    <a href="{% url 'home' %}" class="nav-item">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Главная</span>
+    </a>
+    <a href="{% url 'course_list' %}" class="nav-item active">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h10"/><path d="M7 12h10"/><path d="M7 17h10"/></svg>
+        <span>Каталог</span>
+    </a>
+    <a href="{% url 'favorites_list' %}" class="nav-item">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        <span>Избранное</span>
+    </a>
+    <a href="{% url 'profile' %}" class="nav-item">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Профиль</span>
+    </a>
+</nav>
+
 </body>
 </html>

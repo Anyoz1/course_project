@@ -2,101 +2,188 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>{{ course.title }} — StudyArch</title>
     <style>
-        body { font-family: -apple-system, sans-serif; background: #f8f9fa; color: #212529; margin: 0; padding: 40px 20px; }
-        .content { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .back-link { text-decoration: none; color: #007bff; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; margin-bottom: 30px; }
+        * { box-sizing: border-box; }
+
+        :root {
+            --primary: #2563EB;
+            --bg: #F9FAFB;
+            --text: #111827;
+            --card-bg: #ffffff;
+            --border: #E5E7EB;
+            --gray: #6B7280;
+            --radius: 16px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0 0 180px 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .container { max-width: 800px; margin: auto; padding: 20px; }
+
+        .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 0 20px; }
+        .back-btn { display: flex; align-items: center; text-decoration: none; color: var(--text); font-weight: 600; gap: 8px; }
+        .fav-btn-round { background: white; border: 1px solid var(--border); padding: 10px; border-radius: 50%; display: flex; cursor: pointer; }
+        .fav-active { border-color: #EF4444; color: #EF4444; background: #FEF2F2; }
+
+        h1 { font-size: 2rem; margin: 0 0 12px; font-weight: 800; }
+        .description { color: var(--gray); font-size: 1.05rem; line-height: 1.6; margin-bottom: 24px; }
+
+        .info-card { background: var(--card-bg); border-radius: var(--radius); padding: 24px; border: 1px solid var(--border); margin-bottom: 32px; }
+        .info-row { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+        .info-row a { color: var(--primary); text-decoration: none; font-weight: 600; }
+
+        /* --- LESSONS (FIXED) --- */
+        .section-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
         
-        .header-box { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
-        h1 { margin: 0; font-size: 2.2rem; font-weight: 800; }
-        
-        .info-card { background: #f0fdf4; border: 1px solid #dcfce7; padding: 20px; border-radius: 12px; margin: 25px 0; }
-        .lessons { list-style: none; padding: 0; }
-        .lesson-item { background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        
+        .lesson-card {
+            background: white;
+            padding: 18px;
+            border-radius: var(--radius);
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border);
+            text-decoration: none; /* Убираем подчеркивание для всей карточки */
+            color: inherit;
+            transition: background 0.2s;
+        }
+        .lesson-card:active { background: #f3f4f6; } /* Эффект нажатия */
+
+        /* --- ОТЗЫВЫ --- */
         .comment-section { margin-top: 40px; border-top: 2px solid #f1f1f1; padding-top: 30px; }
         .comment-box { border-bottom: 1px solid #f1f1f1; padding: 15px 0; }
-        textarea { width: 100%; border: 1px solid #ddd; border-radius: 10px; padding: 15px; font-family: inherit; margin: 15px 0; box-sizing: border-box; }
-        .btn-submit { background: #212529; color: white; border: none; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+        .comment-box strong { display: block; margin-bottom: 4px; font-size: 0.95rem; }
+        .comment-box p { margin: 0; color: #444; line-height: 1.5; }
         
-        /* Кнопка избранного */
-        .fav-action { text-decoration: none; color: #666; border: 1px solid #ddd; padding: 8px 15px; border-radius: 10px; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; transition: 0.2s; }
-        .fav-action:hover { border-color: #ff4757; color: #ff4757; }
-        .fav-active-detail { border-color: #ff4757 !important; color: #ff4757 !important; font-weight: 600; }
+        textarea { width: 100%; border: 1px solid #ddd; border-radius: 12px; padding: 15px; font-family: inherit; margin: 15px 0; box-sizing: border-box; font-size: 1rem; }
+        .btn-submit { background: #212529; color: white; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; font-weight: 600; width: 100%; }
+
+        /* --- ACTION BAR --- */
+        .action-bar {
+            position: fixed; bottom: 85px; left: 20px; right: 20px;
+            width: calc(100% - 40px); background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            padding: 12px; border-radius: 20px; border: 1px solid var(--border);
+            z-index: 1100; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: flex; justify-content: center;
+        }
+        .btn-primary { display: block; width: 100%; padding: 16px; background: var(--primary); color: white; border-radius: var(--radius); text-decoration: none; text-align: center; font-weight: 700; font-size: 1.05rem; border: none; }
+        .badge-success { display: block; width: 100%; padding: 16px; background: #ECFDF5; color: #059669; border-radius: var(--radius); text-align: center; font-weight: 700; }
+
+        /* --- BOTTOM NAV --- */
+        .mobile-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--border); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+        .nav-item { text-decoration: none; color: #9CA3AF; display: flex; flex-direction: column; align-items: center; font-size: 11px; font-weight: 600; flex: 1; }
+        .nav-item.active { color: var(--primary); }
     </style>
 </head>
 <body>
-    <div class="content">
-        <a href="/" class="back-link">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            Назад к курсам
+
+<div class="container">
+    <div class="top-bar">
+        <a href="{% url 'course_list' %}" class="back-btn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Назад
         </a>
+        
+        <a href="{% url 'toggle_favorite' course.id %}" class="fav-btn-round {% if is_favorite %}fav-active{% endif %}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="{% if is_favorite %}#EF4444{% else %}none{% endif %}" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </a>
+    </div>
 
-        <div class="header-box">
-            <h1>{{ course.title }}</h1>
-            
-            <a href="{% url 'toggle_favorite' course.id %}" 
-               class="fav-action {% if is_favorite %}fav-active-detail{% endif %}">
-                <svg width="20" height="20" viewBox="0 0 24 24" 
-                     fill="{% if is_favorite %}#ff4757{% else %}none{% endif %}" 
-                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-                {% if is_favorite %}В избранном{% else %}В избранное{% endif %}
-            </a>
-        </div>
+    <h1>{{ course.title }}</h1>
+    <p class="description">{{ course.description }}</p>
 
-        <p style="color: #666; font-size: 1.1rem;">{{ course.description }}</p>
-
-        <div class="info-card">
-            <h3 style="margin-top: 0; font-size: 1rem;">📚 Материалы курса</h3>
+    <div class="info-card">
+        <div class="info-row">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
             {% if course.course_url %}
-                <p>🔗 <a href="{{ course.course_url }}" target="_blank" style="color: #166534; font-weight: 700;">Открыть внешнюю ссылку</a></p>
-            {% endif %}
-            {% if course.author_contacts %}
-                <p>👤 Контакты автора: <strong>{{ course.author_contacts }}</strong></p>
+                <a href="{{ course.course_url }}" target="_blank">Перейти к материалам</a>
             {% endif %}
         </div>
-
-        <h3>Список уроков</h3>
-        <ul class="lessons">
-            {% for lesson in course.lessons.all %}
-                <li class="lesson-item">
-                    <span><strong>{{ forloop.counter }}.</strong> {{ lesson.title }}</span>
-                    {% if lesson.video_url %}
-                        <a href="{{ lesson.video_url }}" target="_blank" style="text-decoration:none; font-size: 0.8rem; background: #eee; padding: 4px 10px; border-radius: 5px; color: #333;">Видео</a>
-                    {% endif %}
-                </li>
-            {% empty %}
-                <p>Уроков пока нет.</p>
-            {% endfor %}
-        </ul>
-
-        <div class="comment-section">
-            <h3>Комментарии</h3>
-            {% for comment in course.comments.all %}
-                <div class="comment-box">
-                    <strong>@{{ comment.user.username }}</strong>
-                    <p style="margin: 5px 0;">{{ comment.text }}</p>
-                </div>
-            {% empty %}
-                <p style="color: #999;">Здесь пока тихо.</p>
-            {% endfor %}
-
-            {% if user.is_authenticated %}
-                <form method="post" action="{% url 'add_comment' course.id %}">
-                    {% csrf_token %}
-                    <textarea name="comment_text" rows="3" placeholder="Напишите ваш отзыв..." required></textarea>
-                    <button type="submit" class="btn-submit">Отправить</button>
-                </form>
-            {% else %}
-                <p style="margin-top: 20px; font-size: 0.9rem; color: #666; background: #f8f9fa; padding: 15px; border-radius: 10px;">
-                    <a href="{% url 'login' %}">Войдите</a>, чтобы оставить комментарий.
-                </p>
-            {% endif %}
+        <div class="info-row">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Автор: {{ course.author_contacts|default:"+7 705 263 1111" }}</span>
         </div>
     </div>
+
+    <div class="section-title">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+        Программа обучения
+    </div>
+
+    {% for lesson in course.lessons.all %}
+        <a href="{% if lesson.video_url %}{{ lesson.video_url }}{% else %}#{% endif %}" class="lesson-card" {% if lesson.video_url %}target="_blank"{% endif %}>
+            <div style="display: flex; align-items: center; gap: 14px;">
+                <span class="lesson-num">{{ forloop.counter }}</span>
+                <span style="font-weight: 500;">{{ lesson.title }}</span>
+            </div>
+            {% if lesson.video_url %}
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            {% endif %}
+        </a>
+    {% endfor %}
+
+    <div class="comment-section">
+        <div class="section-title">Отзывы</div>
+        {% for comment in course.comments.all %}
+            <div class="comment-box">
+                <strong>@{{ comment.user.username }}</strong>
+                <p>{{ comment.text }}</p>
+            </div>
+        {% empty %}
+            <p style="color: var(--gray); margin-top: 10px;">Отзывов пока нет</p>
+        {% endfor %}
+
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'add_comment' course.id %}">
+                {% csrf_token %}
+                <textarea name="comment_text" rows="3" placeholder="Ваше мнение о курсе..." required></textarea>
+                <button type="submit" class="btn-submit">Отправить отзыв</button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+
+<div class="action-bar">
+    {% if user.is_authenticated %}
+        {% if is_enrolled %}
+            <div class="badge-success">Вы изучаете этот курс</div>
+        {% else %}
+            <a href="{% url 'enroll_course' course.id %}" class="btn-primary">Начать обучение</a>
+        {% endif %}
+    {% else %}
+        <a href="{% url 'login' %}" class="btn-primary">Войти и начать обучение</a>
+    {% endif %}
+</div>
+
+<nav class="mobile-nav">
+    <a href="{% url 'home' %}" class="nav-item">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Главная</span>
+    </a>
+    <a href="{% url 'course_list' %}" class="nav-item">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h10"/><path d="M7 12h10"/><path d="M7 17h10"/></svg>
+        <span>Каталог</span>
+    </a>
+    <a href="{% url 'favorites_list' %}" class="nav-item">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        <span>Избранное</span>
+    </a>
+    <a href="{% url 'profile' %}" class="nav-item">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Профиль</span>
+    </a>
+</nav>
+
 </body>
 </html>
