@@ -1,0 +1,15 @@
+# База данных
+db.sqlite3
+
+# Виртуальное окружение
+venv/
+env/
+
+# Настройки VS Code и PyCharm
+.vscode/
+.idea/
+*.code-workspace
+
+# Временные файлы Python
+__pycache__/
+*.py[cod]
