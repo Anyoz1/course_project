@@ -9,19 +9,19 @@
         * { box-sizing: border-box; }
 
         :root {
-            --primary: #2563EB; /* Твой новый синий из Detail */
+            --primary: #2563EB;
             --bg: #F9FAFB;
             --text: #111827;
             --card-bg: #ffffff;
             --fav: #EF4444;
             --border: #E5E7EB;
             --gray: #6B7280;
-            --radius: 16px; /* Твой стандарт скругления */
+            --radius: 16px;
         }
 
         body {
             margin: 0;
-            padding: 0 0 100px 0; /* Отступ под нижнюю навигацию */
+            padding: 0 0 100px 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: var(--bg);
             color: var(--text);
@@ -30,26 +30,26 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: auto;
             padding: 20px;
         }
 
-        /* --- HEADER --- */
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        /* --- HEADER (Синхронно с каталогом) --- */
+        .header-sticky {
+            position: sticky;
+            top: 10px;
             background: var(--card-bg);
             padding: 12px 20px;
             border-radius: var(--radius);
             border: 1px solid var(--border);
             box-shadow: 0 2px 10px rgba(0,0,0,.02);
-            margin-bottom: 20px;
+            margin: 10px 20px 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             gap: 15px;
-            position: sticky;
-            top: 10px;
-            z-index: 900;
         }
 
         .logo {
@@ -60,8 +60,7 @@
             letter-spacing: -0.5px;
         }
 
-        /* --- SEARCH --- */
-        .search-form {
+        .search-container {
             position: relative;
             flex-grow: 1;
             max-width: 400px;
@@ -90,9 +89,22 @@
             top: 50%;
             transform: translateY(-50%);
             color: var(--gray);
+            pointer-events: none;
         }
 
-        .nav-desktop { display: none; gap: 20px; }
+        /* Десктопная навигация */
+        .nav-desktop {
+            display: none; 
+            gap: 24px;
+        }
+        .nav-desktop a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        .nav-desktop a:hover { color: var(--primary); }
 
         /* --- HERO --- */
         .hero {
@@ -103,6 +115,7 @@
             margin: 10px 0 30px;
             text-align: left;
             box-shadow: 0 10px 25px rgba(37, 99, 235, 0.2);
+            transition: all 0.3s ease;
         }
 
         .hero h1 { margin: 0 0 8px; font-size: 1.8rem; font-weight: 800; }
@@ -124,13 +137,12 @@
             display: flex;
             flex-direction: column;
             border: 1px solid var(--border);
-            transition: transform 0.2s;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .card h3 { margin: 0 0 10px; font-size: 1.15rem; font-weight: 700; color: #111; }
         .card p { margin: 0 0 20px; color: var(--gray); font-size: 0.9rem; flex-grow: 1; }
 
-        /* Кнопка сердечко как в Detail */
         .fav-btn {
             position: absolute;
             top: 18px;
@@ -141,7 +153,9 @@
             padding: 8px;
             border-radius: 50%;
             display: flex;
-            transition: 0.2s;
+            transition: all 0.2s;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .btn-main {
@@ -153,66 +167,61 @@
             border-radius: var(--radius);
             font-weight: 600;
             font-size: 0.95rem;
-            transition: 0.2s;
+            transition: background 0.2s;
         }
 
-        /* --- BOTTOM NAV (Синхронно с Detail) --- */
+        /* --- BOTTOM NAV --- */
         .mobile-nav {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 0; left: 0; right: 0;
             height: 75px;
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border-top: 1px solid var(--border);
-            z-index: 1000;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            display: flex; justify-content: space-around; align-items: center;
+            border-top: 1px solid var(--border); z-index: 1000;
             padding-bottom: env(safe-area-inset-bottom);
         }
 
         .nav-item {
-            text-decoration: none;
-            color: #9CA3AF;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 11px;
-            font-weight: 600;
-            transition: 0.2s;
-            flex: 1;
+            text-decoration: none; color: #9CA3AF;
+            display: flex; flex-direction: column; align-items: center;
+            font-size: 11px; font-weight: 600; flex: 1;
         }
-
         .nav-item svg { margin-bottom: 4px; }
         .nav-item.active { color: var(--primary); }
 
-        @media (min-width: 768px) {
-            .nav-desktop { display: flex; }
-            .mobile-nav { display: none; }
+        /* --- MEDIA QUERIES ДЛЯ ПК --- */
+        @media (min-width: 1024px) {
             body { padding-bottom: 0; }
+            .header-sticky { margin: 20px auto; max-width: 1160px; top: 20px; padding: 12px 30px; }
+            .nav-desktop { display: flex !important; }
+            .mobile-nav { display: none; }
+            .hero { padding: 60px; text-align: center; margin-bottom: 50px; }
+            .hero h1 { font-size: 3rem; }
+            .grid { grid-template-columns: repeat(3, 1fr); gap: 30px; }
+            .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
         }
     </style>
 </head>
 <body>
 
+<header class="header-sticky">
+    <a href="{% url 'home' %}" class="logo">StudyArch</a>
+
+    <form action="{% url 'course_list' %}" method="get" class="search-container">
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" name="q" class="search-input" placeholder="Поиск курсов..." value="{{ query|default:'' }}">
+    </form>
+
+    <nav class="nav-desktop">
+        <a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}style="color: var(--primary);"{% endif %}>Главная</a>
+        <a href="{% url 'course_list' %}" {% if request.resolver_match.url_name == 'course_list' %}style="color: var(--primary);"{% endif %}>Каталог</a>
+        <a href="{% url 'favorites_list' %}" {% if request.resolver_match.url_name == 'favorites_list' %}style="color: var(--primary);"{% endif %}>Избранное</a>
+        <a href="{% url 'profile' %}" {% if request.resolver_match.url_name == 'profile' %}style="color: var(--primary);"{% endif %}>Профиль</a>
+    </nav>
+</header>
+
 <div class="container">
-    <header class="header">
-        <a href="{% url 'home' %}" class="logo">StudyArch</a>
-
-        <form action="{% url 'course_list' %}" method="get" class="search-form">
-            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" name="q" class="search-input" placeholder="Поиск курсов...">
-        </form>
-
-        <nav class="nav-desktop">
-            <a href="{% url 'course_list' %}" style="text-decoration:none; color:var(--text); font-weight: 500;">Каталог</a>
-            <a href="{% url 'profile' %}" style="text-decoration:none; color:var(--text); font-weight: 500;">Профиль</a>
-        </nav>
-    </header>
-
     <div class="hero">
         <h1>Топ курсов</h1>
         <p>Специально отобранные материалы для тебя</p>
@@ -223,13 +232,13 @@
     <div class="grid">
         {% for course in courses %}
             <div class="card">
-                <a href="{% url 'toggle_favorite' course.id %}" class="fav-btn">
+                <button class="fav-btn ajax-fav-btn" data-url="{% url 'toggle_favorite' course.id %}">
                     <svg width="20" height="20" viewBox="0 0 24 24" 
                          fill="{% if course.id in favorite_ids %}var(--fav){% else %}none{% endif %}" 
                          stroke="{% if course.id in favorite_ids %}var(--fav){% else %}currentColor{% endif %}" stroke-width="2">
                         <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
                     </svg>
-                </a>
+                </button>
                 
                 <h3>{{ course.title }}</h3>
                 <p>{{ course.description|truncatewords:12 }}</p>
@@ -260,6 +269,31 @@
         <span>Профиль</span>
     </a>
 </nav>
+
+<script>
+    document.querySelectorAll('.ajax-fav-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = this.getAttribute('data-url');
+            const svg = this.querySelector('svg');
+
+            fetch(url, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'added') {
+                    svg.setAttribute('fill', 'var(--fav)');
+                    svg.setAttribute('stroke', 'var(--fav)');
+                } else {
+                    svg.setAttribute('fill', 'none');
+                    svg.setAttribute('stroke', 'currentColor');
+                }
+            })
+            .catch(error => console.error('Ошибка:', error));
+        });
+    });
+</script>
 
 </body>
 </html>

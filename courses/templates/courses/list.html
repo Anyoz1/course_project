@@ -9,60 +9,75 @@
         * { box-sizing: border-box; }
 
         :root {
-            --primary: #2563EB; /* Твой стандартный синий */
+            --primary: #2563EB;
             --bg: #F9FAFB;
             --text: #111827;
             --card-bg: #ffffff;
             --border: #E5E7EB;
             --gray: #6B7280;
-            --chip-bg: #F3F4F6;
+            --fav: #EF4444;
             --radius: 16px;
         }
 
         body {
             margin: 0;
-            padding: 0 0 100px 0; /* Отступ под нижнюю панель */
+            padding: 0 0 100px 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: var(--bg);
             color: var(--text);
             -webkit-font-smoothing: antialiased;
         }
 
-        .container { max-width: 800px; margin: auto; padding: 20px; }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
 
-        /* --- HEADER & STICKY SEARCH --- */
+        /* --- HEADER (Синхронно с Home) --- */
         .header-sticky {
             position: sticky;
-            top: 0;
-            background: rgba(249, 250, 251, 0.9);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            z-index: 1000;
+            top: 10px;
+            background: var(--card-bg);
             padding: 12px 20px;
-            border-bottom: 1px solid var(--border);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 10px rgba(0,0,0,.02);
+            margin: 10px 20px 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            letter-spacing: -0.5px;
         }
 
         .search-container {
             position: relative;
-            display: flex;
-            align-items: center;
-            max-width: 800px;
-            margin: auto;
+            flex-grow: 1;
+            max-width: 400px;
         }
 
         .search-input {
-            flex-grow: 1;
-            padding: 12px 15px 12px 42px;
+            width: 100%;
+            padding: 10px 15px 10px 40px;
             border-radius: 12px;
             border: 1px solid var(--border);
-            background: #ffffff;
+            background: #F3F4F6;
             outline: none;
-            font-size: 1rem;
+            font-size: 0.95rem;
             transition: 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
 
         .search-input:focus { 
+            background: #fff;
             border-color: var(--primary); 
             box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); 
         }
@@ -70,9 +85,25 @@
         .search-icon {
             position: absolute;
             left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
             color: var(--gray);
             pointer-events: none;
         }
+
+        /* Десктопная навигация */
+        .nav-desktop {
+            display: none; 
+            gap: 24px;
+        }
+        .nav-desktop a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        .nav-desktop a:hover { color: var(--primary); }
 
         /* --- CATEGORIES (Chips) --- */
         .category-nav {
@@ -81,6 +112,7 @@
             overflow-x: auto;
             padding: 10px 0 25px;
             scrollbar-width: none;
+            scroll-behavior: smooth;
         }
         .category-nav::-webkit-scrollbar { display: none; }
 
@@ -101,7 +133,6 @@
             background: var(--primary);
             color: #fff !important;
             border-color: var(--primary);
-            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
         }
 
         /* --- GRID & CARDS --- */
@@ -119,10 +150,26 @@
             display: flex;
             flex-direction: column;
             border: 1px solid var(--border);
-            transition: transform 0.2s;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .card h3 { margin: 0 0 10px; font-size: 1.2rem; font-weight: 700; color: var(--text); }
+        .fav-btn {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            background: #fff;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            transition: all 0.2s;
+            outline: none;
+            z-index: 10;
+        }
+
+        .card h3 { margin: 0 0 10px; font-size: 1.2rem; font-weight: 700; color: var(--text); padding-right: 35px; }
         .card p { margin: 0 0 20px; color: var(--gray); font-size: 0.95rem; line-height: 1.5; flex-grow: 1; }
 
         .btn-main {
@@ -136,7 +183,6 @@
             font-size: 1rem;
             transition: 0.2s;
         }
-        .btn-main:active { opacity: 0.8; transform: scale(0.98); }
 
         /* --- BOTTOM NAV --- */
         .mobile-nav {
@@ -164,22 +210,40 @@
             font-weight: 600;
             flex: 1;
         }
-
         .nav-item svg { margin-bottom: 4px; }
         .nav-item.active { color: var(--primary); }
+
+        /* --- MEDIA QUERIES ДЛЯ ПК --- */
+        @media (min-width: 1024px) {
+            body { padding-bottom: 0; }
+            .header-sticky { margin: 20px auto; max-width: 1160px; top: 20px; padding: 12px 30px; }
+            .nav-desktop { display: flex !important; }
+            .mobile-nav { display: none; }
+            .grid { grid-template-columns: repeat(3, 1fr); gap: 30px; }
+            .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+        }
     </style>
 </head>
 <body>
 
-<div class="header-sticky">
+<header class="header-sticky">
+    <a href="{% url 'home' %}" class="logo">StudyArch</a>
+
     <form action="{% url 'course_list' %}" method="get" class="search-container">
         <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         <input type="text" name="q" class="search-input" placeholder="Поиск в каталоге..." value="{{ query|default:'' }}">
     </form>
-</div>
+
+    <nav class="nav-desktop">
+        <a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}style="color: var(--primary);"{% endif %}>Главная</a>
+        <a href="{% url 'course_list' %}" {% if request.resolver_match.url_name == 'course_list' or request.resolver_match.url_name == 'category_filter' %}style="color: var(--primary);"{% endif %}>Каталог</a>
+        <a href="{% url 'favorites_list' %}" {% if request.resolver_match.url_name == 'favorites_list' %}style="color: var(--primary);"{% endif %}>Избранное</a>
+        <a href="{% url 'profile' %}" {% if request.resolver_match.url_name == 'profile' %}style="color: var(--primary);"{% endif %}>Профиль</a>
+    </nav>
+</header>
 
 <div class="container">
-    <nav class="category-nav">
+    <nav class="category-nav" id="categoryNav">
         <a href="{% url 'course_list' %}" class="cat-item {% if not current_category %}cat-active{% endif %}">Все курсы</a>
         {% for cat in categories %}
             <a href="{% url 'category_filter' cat.id %}" class="cat-item {% if current_category.id == cat.id %}cat-active{% endif %}">
@@ -188,7 +252,7 @@
         {% endfor %}
     </nav>
 
-    <h2 style="font-size: 1.4rem; font-weight: 800; margin: 0 0 20px; letter-spacing: -0.02em;">
+    <h2 style="font-size: 1.4rem; font-weight: 800; margin: 0 0 20px 5px; letter-spacing: -0.02em;">
         {% if query %}Результаты: "{{ query }}"
         {% elif current_category %}{{ current_category.name }}
         {% else %}Полный каталог{% endif %}
@@ -197,6 +261,14 @@
     <div class="grid">
     {% for course in courses %}
         <div class="card">
+            <button class="fav-btn ajax-fav-btn" data-url="{% url 'toggle_favorite' course.id %}">
+                <svg width="20" height="20" viewBox="0 0 24 24" 
+                     fill="{% if course.id in favorite_ids %}var(--fav){% else %}none{% endif %}" 
+                     stroke="{% if course.id in favorite_ids %}var(--fav){% else %}currentColor{% endif %}" stroke-width="2">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                </svg>
+            </button>
+
             <h3>{{ course.title }}</h3>
             <p>{{ course.description|truncatewords:15 }}</p>
             <a href="{% url 'course_detail' course.id %}" class="btn-main">Изучить</a>
@@ -223,6 +295,43 @@
         <span>Профиль</span>
     </a>
 </nav>
+
+<script>
+    // AJAX СЕРДЕЧКИ
+    document.querySelectorAll('.ajax-fav-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = this.getAttribute('data-url');
+            const svg = this.querySelector('svg');
+
+            fetch(url, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'added') {
+                    svg.setAttribute('fill', 'var(--fav)');
+                    svg.setAttribute('stroke', 'var(--fav)');
+                } else {
+                    svg.setAttribute('fill', 'none');
+                    svg.setAttribute('stroke', 'currentColor');
+                }
+            });
+        });
+    });
+
+    // СОХРАНЕНИЕ СКРОЛЛА КАТЕГОРИЙ
+    const catNav = document.getElementById('categoryNav');
+    window.addEventListener('load', () => {
+        const scrollPos = localStorage.getItem('catScrollPos');
+        if (scrollPos) catNav.scrollLeft = scrollPos;
+    });
+    catNav.querySelectorAll('.cat-item').forEach(link => {
+        link.addEventListener('click', () => {
+            localStorage.setItem('catScrollPos', catNav.scrollLeft);
+        });
+    });
+</script>
 
 </body>
 </html>

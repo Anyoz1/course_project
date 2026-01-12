@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from .models import Course, Comment, Category, Favorite, Enrollment
+from django.http import JsonResponse
 
 # 1. ГЛАВНАЯ: Рекомендуемые курсы
 def home(request):
@@ -125,20 +126,32 @@ def signup(request):
 
 def toggle_favorite(request, course_id):
     course = get_object_or_404(Course, id=course_id)
+    
     if request.user.is_authenticated:
         fav, created = Favorite.objects.get_or_create(user=request.user, course=course)
-        if not created: 
+        if not created:
             fav.delete()
+            status = 'removed'
+        else:
+            status = 'added'
     else:
         favorites = request.session.get('favorites', [])
-        if course_id in favorites: 
+        if course_id in favorites:
             favorites.remove(course_id)
-        else: 
+            status = 'removed'
+        else:
             favorites.append(course_id)
+            status = 'added'
         request.session['favorites'] = favorites
         request.session.modified = True
-    return redirect(request.META.get('HTTP_REFERER', 'course_list'))
+        
+    # Если это AJAX запрос, возвращаем JSON, иначе — обычный редирект
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'status': status})
+        
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
 
+    
 def favorites_list(request):
     categories = Category.objects.all()
     if request.user.is_authenticated:
